@@ -1,0 +1,31 @@
+export plugname=perfevent2
+portbase=61060
+cat << EOF > $LDMSD_RUN/perfconf.json
+{
+  "events": [
+    { "event": "cache-misses" },
+    { "event": "power/energy-pkg/", "cpu": 0 },
+    { "event": "instructions" },
+    { "event": "cpu/L1-dcache-loads/", "cpu": "0-3,8-11" }
+  ]
+}
+EOF
+export PERFCONF=$LDMSD_RUN/perfconf.json
+DAEMONS 2
+VGARGS="--track-origins=yes --leak-check=full --show-leak-kinds=all"
+#VGARGS="--tool=drd"
+vgon
+LDMSD -c 1
+vgoff
+SLEEP 5
+LDMSD -c 2
+SLEEP 1
+MESSAGE ldms_ls on sampler:
+LDMS_LS 1 -v
+SLEEP 1
+LDMS_LS 1 -v
+MESSAGE ldms_ls on store:
+LDMS_LS 2 -v
+SLEEP 5
+KILL_LDMSD 1 2
+file_created $STOREDIR/node/$testname
