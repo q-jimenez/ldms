@@ -1,3 +1,13 @@
+# Personal
+available_counters.txt
+config_options.txt
+papievents.txt
+ldmsenv.sh
+reset_paranoia
+# End
+install
+obj
+ldmstest
 /.version
 .deps*
 *~

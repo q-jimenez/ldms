@@ -1,0 +1,5 @@
+msg_enable
+stream_enable
+load name=${plugname}
+config name=${plugname} producer=localhost${i} instance=${plugname} cfg_file=${PAPICONF}
+start name=${plugname} interval=1000000 offset=0

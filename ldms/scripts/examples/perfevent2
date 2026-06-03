@@ -1,0 +1,93 @@
+export plugname=perfevent2
+portbase=61060
+cat << EOF > $LDMSD_RUN/${testname}_decomp.json
+{
+  "type" : "flex",
+  "decomposition" : {
+    "${testname}_decomp" : {
+        "type" : "static",
+        "rows" : [
+        {
+          "schema" : "${testname}",
+          "cols" : [
+            { "src" : "timestamp", "dst" : "timestamp", "type" : "ts" },
+            { "src" : "component_id", "dst" : "component_id", "type" : "u64" },
+            { "src" : "job_id", "dst" : "job_id", "type" : "u64" },
+            { "src" : "counters", "rec_member" : "name", "dst" : "name", "type" : "char[]", "array_len" : 128 },
+            { "src" : "counters", "rec_member" : "pid", "dst" : "pid", "type" : "s64" },
+            { "src" : "counters", "rec_member" : "counters", "dst" : "counters", "type" : "s64[]", "array_len" : 8 }
+          ],
+          "indices" : [
+            { "name": "job_comp_time", "cols": [ "job_id", "component_id", "timestamp" ] },
+            { "name": "time_comp", "cols": [ "timestamp", "component_id" ] }
+          ]
+        }
+      ]
+    }
+  },
+  "digest" : {
+	  "D325419E1DE2B58E4DBCDF95727558B21AC4276099FEDC2302F58B3690878181" : "${testname}_decomp"
+  }
+}
+EOF
+cat << EOF > $LDMSD_RUN/${testname}_config.json
+{
+  "events": [
+    { "event": "cpu/cpu-cycles/" },
+    { "event": "cpu/instructions/"},
+    { "event": "power/energy-pkg/"},
+    { "event": "power/energy-ram/"},
+    { "event": "unc_p_mcp_prochot_cycles"},
+    { "event": "unc_p_freq_max_limit_thermal_cycles"},
+    { "event": "unc_p_freq_trans_cycles"}
+  ]
+}
+EOF
+export PERFDECOMP=$LDMSD_RUN/${testname}_decomp.json
+export PERFCONF=$LDMSD_RUN/${testname}_config.json
+#DAEMONS 2
+#VGARGS="--track-origins=yes --leak-check=full --show-leak-kinds=all"
+##VGARGS="--tool=drd"
+##vgon
+#LDMSD -c 1
+#vgoff
+#SLEEP 1
+#LDMSD -c 2
+#SLEEP 5
+#MESSAGE ldms_ls on sampler:
+#LDMS_LS 1 -v
+#SLEEP 1
+#LDMS_LS 1 -v
+#MESSAGE ldms_ls on store:
+#LDMS_LS 2 -v
+#for i in $(seq 4); do
+	#LDMS_LS 2 -v -l
+	#SLEEP 1
+#done
+#SLEEP 1
+#LDMS_LS 2 -v
+#KILL_LDMSD 1 2
+#file_created $STOREDIR/node/$testname
+
+# Benchmark with MiniFE
+MESSAGE Beginning Benchmark:
+MINIDIR=$STOREDIR/miniFE
+mkdir $MINIDIR
+DAEMONS 2
+LDMSD -c 1
+#Set XUSER={username}
+XUSER=foo
+for n in 20; do #12 16 20; do
+  LDMSD -c 2
+  #Where n is the number of mpi tasks
+  sudo -u $XUSER mpirun -np $n --bind-to core --map-by core $MINI_FE_PATH/miniFE.x -nx 256 -ny 256 -nz 256 > $MINIDIR/${testname}_benchmark_${n}
+  SLEEP 10
+  LDMS_LS 1 -v
+  SLEEP 1
+  LDMS_LS 2 -v
+  SLEEP 1
+  pkill mpirun
+done
+KILL_LDMSD 1 2
+file_created $STOREDIR/node/$testname
+chown -R $XUSER /home/$XUSER/ldms

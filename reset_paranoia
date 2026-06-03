@@ -1,0 +1,2 @@
+#Reset Paranoia on System (Run After Experimentation)
+sudo sysctl -w kernel.perf_event_paranoid=4
