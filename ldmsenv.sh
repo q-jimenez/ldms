@@ -26,7 +26,8 @@ else
 	export LDMSD_PLUGIN_LIBPATH
 	export LD_LIBRARY_PATH=${ovis_ldms_plugins_rpath}:${BUILDDIR}/lib:${exec_prefix}/lib:$ovis_ldms_plugins:@libeventpath@:$LD_LIBRARY_PATH
 	bname=`basename $0`
-	USERDIR=$HOME
+	#Set USERDIR=/home/{username}
+	USERDIR=/home/foo
 	BUILDDIR=${USERDIR}/ldms/install
 	export PATH=${BUILDDIR}/bin:$PATH
 	export PATH=${BUILDDIR}/sbin:$PATH
