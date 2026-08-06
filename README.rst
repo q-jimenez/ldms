@@ -81,20 +81,20 @@ Instructions (as Performed on Groom @ UCF)
     $ make -j8
     $ make install
 
-4.  From repository root, run:
+4.  From repository root, update user-specific variables in:
+
+  * ldmsenv.sh
+  * /ldms/scripts/examples/perfevent2
+  * /ldms/scripts/examples/syspapi_sampler
+  * /ldms/scripts/examples/variorum_sampler
+
+5.   From repository root, run:
   .. code:: sh
   
     $ sh autogen.sh
     $ ./buildall.sh
     $ sudo su -
     $ source ldmsenv.sh
-
-5.  From repository root, update user-specific variables in:
-
-  * ldmsenv.sh
-  * /ldms/scripts/examples/perfevent2
-  * /ldms/scripts/examples/syspapi_sampler
-  * /ldms/scripts/examples/variorum_sampler
 
 6.  Perform experimentation...
 
