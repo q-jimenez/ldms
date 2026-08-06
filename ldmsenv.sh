@@ -3,7 +3,9 @@ if ! test $USER = root; then
     echo Not running as root, please change user.
 else
 	sysctl -w kernel.perf_event_paranoid=0
-	prefix=$HOME/ldms/install
+	#Set USERDIR=/home/{username}
+	USERDIR=/home/foo
+	prefix=$USERDIR/ldms/install
 	exec_prefix=${prefix}
 	libdir=${exec_prefix}/lib
 	if ! test -f $libdir/ovis-lib-configvars.sh; then
@@ -26,8 +28,6 @@ else
 	export LDMSD_PLUGIN_LIBPATH
 	export LD_LIBRARY_PATH=${ovis_ldms_plugins_rpath}:${BUILDDIR}/lib:${exec_prefix}/lib:$ovis_ldms_plugins:@libeventpath@:$LD_LIBRARY_PATH
 	bname=`basename $0`
-	#Set USERDIR=/home/{username}
-	USERDIR=/home/foo
 	BUILDDIR=${USERDIR}/ldms/install
 	export PATH=${BUILDDIR}/bin:$PATH
 	export PATH=${BUILDDIR}/sbin:$PATH

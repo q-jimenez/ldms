@@ -3,6 +3,61 @@ LDMS
 ====
 
 --------------------------------------
+Archive Information
+--------------------------------------
+
+Instructions (as Performed on Groom @ UCF)
+--------------------
+  1.  Clone the 'ldmscon26' branch of this repository:
+  .. code:: sh
+
+    $ git clone -b ldmscon26 https://github.com/q-jimenez/ldms.git
+
+  2.  Install Papi:
+  .. code:: sh
+
+   $ wget https://github.com/icl-utk-edu/papi/releases/download/papi-7-2-0-t/papi-7.2.0.tar.gz
+   $ tar xzf papi-7.2.0.tar.gz
+   $ cd papi-7.2.0/src
+   $ ./configure --prefix=$HOME/papi
+   $ make -j
+   $ make install-all
+
+  3.  Install Variorum:
+  .. code:: sh
+
+   $ sudo apt-get install libhwloc15 libhwloc-dev libjansson4 libjansson-dev
+   $ git clone https://github.com/llnl/variorum
+   $ cd variorum
+   $ mkdir build install
+   $ cd build
+   $ cmake -DCMAKE_INSTALL_PREFIX=../install ../src
+   $ make -j8
+   $ make install
+
+  4.  From repository root, run:
+  .. code:: sh
+
+    $ sh autogen.sh
+    $ ./buildall.sh
+    $ sudo su -
+    $ source ldmsenv.sh
+
+  5.  From repository root, update user-specific variables in:
+    * ldmsenv.sh
+    * /ldms/scripts/examples/perfevent2
+    * /ldms/scripts/examples/syspapi_sampler
+    * /ldms/scripts/examples/variorum_sampler
+
+  6.  Perform experimentation...
+
+  7.  After experimentation:
+  .. code:: sh
+
+    $ sh reset_paranoia
+
+
+--------------------------------------
 Lightweight Distributed Metric Service
 --------------------------------------
 
